@@ -7,11 +7,11 @@
 
 using namespace std;
 
-#define ADDRESS_IND 				'@'
-#define HASHTABLE_DATA_SIZE 		5
+#define ADDRESS_IND			'@'
+#define HASHTABLE_DATA_SIZE		5
 #define HASHTABLE_CONNECTIONS_SIZE 	5
-#define SERVERS_COUNT               12
-#define INPUT_DATA_FILENAME			"input_data.txt"
+#define SERVERS_COUNT               	12
+#define INPUT_DATA_FILENAME		"input_data.txt"
 
 bool serversConnections[SERVERS_COUNT][SERVERS_COUNT] = {
 	{0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0},
