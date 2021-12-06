@@ -7,8 +7,8 @@
 
 using namespace std;
 
-#define ADDRESS_IND			'@'
-#define HASHTABLE_DATA_SIZE		5
+#define ADDRESS_IND 			'@'
+#define HASHTABLE_DATA_SIZE 		5
 #define HASHTABLE_CONNECTIONS_SIZE 	5
 #define SERVERS_COUNT               	12
 #define INPUT_DATA_FILENAME		"input_data.txt"
@@ -180,11 +180,16 @@ template <typename keyT, typename dataT> class Interface : public HashTable<keyT
 			return NULL;
 		}
 		
-		void sendRemoveInfo(keyT key, string address) {
-			Node<keyT, Server<keyT, dataT>*>* node = HashTable<keyT, Server<keyT, dataT>*>::find(address);
-			
-			if (node)
-				node->data->removeData(key);
+		void sendRemoveInfo(keyT key) {
+			Node<keyT, Server<keyT, dataT>*>* hashNode;
+			for (int i = 0; i < HashTable<keyT, Server<keyT, dataT>*>::size; i++) {
+				hashNode = HashTable<keyT, Server<keyT, dataT>*>::table[i];
+				
+				while (hashNode) {
+        			hashNode->data->removeData(key);
+                    hashNode = hashNode->next;  
+                }
+			}
 		}
 };
 
@@ -219,9 +224,8 @@ template <typename keyT, typename dataT> class Server : public HashTable<keyT, d
 			Node<keyT, dataT>* node = HashTable<keyT, dataT>::find(key);
 			
 			if (node) {
-				if (node->data[0] == ADDRESS_IND)
-					Interface<keyT, dataT>::sendRemoveInfo(key, node->data);
 				HashTable<keyT, dataT>::pop(key);
+				Interface<keyT, dataT>::sendRemoveInfo(key);
 			}
 		}
 };
