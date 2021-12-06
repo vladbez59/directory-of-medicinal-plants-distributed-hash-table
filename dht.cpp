@@ -7,12 +7,22 @@
 
 using namespace std;
 
+/*Індетифікатор адреси*/
 #define ADDRESS_IND 			'@'
-#define HASHTABLE_DATA_SIZE 		5
-#define HASHTABLE_CONNECTIONS_SIZE 	5
-#define SERVERS_COUNT               	12
-#define INPUT_DATA_FILENAME		"input_data.txt"
 
+/*Розмір хеш таблиці для даних*/
+#define HASHTABLE_DATA_SIZE 		5
+
+/*Розмір хеш таблиці для адрес*/
+#define HASHTABLE_CONNECTIONS_SIZE 	5
+
+/*Кількість серверів*/
+#define SERVERS_COUNT               	12
+
+/*Вхідний файл з даними про лікарські рослини*/
+#define INPUT_DATA_FILENAME			"input_data.txt"
+
+/*Матриця зв'язків між серверами*/
 bool serversConnections[SERVERS_COUNT][SERVERS_COUNT] = {
 	{0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0},
 	{1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0},
@@ -30,20 +40,23 @@ bool serversConnections[SERVERS_COUNT][SERVERS_COUNT] = {
 
 template <typename keyT, typename dataT> class Server;
 
+/*Структура елементу хеш таблиці*/
 template <typename keyT, typename dataT> struct Node {
-	keyT key;
-	dataT data;
-	Node* next = NULL;
+	keyT key;			//ключ
+	dataT data;			//дані
+	Node* next = NULL;	//адреса на наступний елемент
 		
 	Node(keyT _key, dataT _data) : key(_key), data(_data) {}
 };
 
+/*Клас хеш таблиці*/
 template <typename keyT, typename dataT> class HashTable {
 	protected:
-		Node<keyT, dataT>** table;
-		int records;
-		int size;
+		Node<keyT, dataT>** table;	//хеш таблиці
+		int records;				//кількість записів
+		int size;					//розмір таблиці
 	
+		/*Хеш функція*/
 		unsigned int hashFunc(keyT key) {
 			int sum = 0;
 			for (int i = 0; i < key.length(); i++)
@@ -60,6 +73,7 @@ template <typename keyT, typename dataT> class HashTable {
 				table[i] = NULL;
 		}
 		
+		/*Функція додавання нового елемента*/
 		void push(keyT key, dataT data) {
 			records++;
 			unsigned int hashNumber = hashFunc(key);
@@ -76,6 +90,7 @@ template <typename keyT, typename dataT> class HashTable {
 			}	
 		}
 		
+		/*Функція знаходження елемента*/
 		Node<keyT, dataT>* find(keyT key) {
 			unsigned int hashNumber = hashFunc(key);
 			
@@ -89,6 +104,7 @@ template <typename keyT, typename dataT> class HashTable {
 			return NULL;
 		}
 		
+		/*Функція видалення елемента*/
 		void pop(keyT key) {
 			unsigned int hashNumber = hashFunc(key);
 			
@@ -115,26 +131,24 @@ template <typename keyT, typename dataT> class HashTable {
 			}
 		}
 		
+		/*Функція друкування усіх ключів*/
 		void printKeys() {
-			bool flag = false;
+			keyT* keys = getKeys();
 			
-			for (int i = 0; i < size; i++) {
-				Node<keyT, dataT>* hashNode = table[i];
+			for (int i = 0; i < records; i++)
+				cout << "- " << keys[i] << endl;
 			
-				while (hashNode) {
-					flag = true;
-					cout << "- " << hashNode->key << endl;	
-			 		hashNode = hashNode->next; 	
-				}
-			}
-			
-			if (flag == false)
+			if (records == 0)
 				cout << "Noting." << endl;
 		}
 		
+		/*Функція знаходження усіх ключів*/
 		keyT* getKeys() {
-			keyT* keys = new keyT[records];
+			keyT* keys = NULL;
 			int k = 0;
+
+			if (records)
+				keys = new keyT[records];
 			
 			for (int i = 0; i < size; i++) {
 				Node<keyT, dataT>* hashNode = table[i]; 
